@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>インナーチャイルドカード</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>インナーチャイルドカード</h1>
+      <p class="tagline">心の中の「小さな自分」に会いに行こう</p>
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="draw">カードを引く</button>
+        <button class="tab-btn" data-tab="gallery">カード一覧</button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 引くタブ -->
+      <section id="draw" class="screen active">
+        <div class="draw-stage">
+          <div id="card" class="card" tabindex="0" role="button" aria-label="カードをめくる">
+            <div class="card-inner">
+              <div class="card-face card-front">
+                <div class="card-front-emblem">✦</div>
+                <p class="card-front-text">タップしてめくる</p>
+              </div>
+              <div class="card-face card-back">
+                <div class="card-icon" id="cardIcon"></div>
+                <h2 id="cardTitle"></h2>
+                <p id="cardReading" class="reading"></p>
+                <p id="cardMessage" class="message"></p>
+                <p id="cardQuestion" class="question"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="controls">
+          <button id="drawBtn" class="primary-btn">カードを引く</button>
+          <button id="resetBtn" class="secondary-btn" hidden>もう一度引く</button>
+        </div>
+      </section>
+
+      <!-- 一覧タブ -->
+      <section id="gallery" class="screen">
+        <div id="galleryGrid" class="gallery-grid"></div>
+      </section>
+    </main>
+
+    <div id="modalOverlay" class="modal-overlay" hidden>
+      <div class="modal-card">
+        <button id="modalClose" class="modal-close" aria-label="閉じる">×</button>
+        <div class="card-icon" id="modalIcon"></div>
+        <h2 id="modalTitle"></h2>
+        <p id="modalReading" class="reading"></p>
+        <p id="modalMessage" class="message"></p>
+        <p id="modalQuestion" class="question"></p>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <p>このカードは自己内省のためのツールです。専門的な治療の代わりにはなりません。</p>
+    </footer>
+  </div>
+
+<script src="cards.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
