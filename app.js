@@ -1,122 +1,106 @@
 (() => {
-  const cardEl = document.getElementById("card");
-  const drawBtn = document.getElementById("drawBtn");
-  const resetBtn = document.getElementById("resetBtn");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const cardIcon = document.getElementById("cardIcon");
-  const cardTitle = document.getElementById("cardTitle");
-  const cardReading = document.getElementById("cardReading");
-  const cardMessage = document.getElementById("cardMessage");
-  const cardQuestion = document.getElementById("cardQuestion");
-
-  const galleryGrid = document.getElementById("galleryGrid");
-  const modalOverlay = document.getElementById("modalOverlay");
-  const modalClose = document.getElementById("modalClose");
-  const modalIcon = document.getElementById("modalIcon");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalReading = document.getElementById("modalReading");
-  const modalMessage = document.getElementById("modalMessage");
-  const modalQuestion = document.getElementById("modalQuestion");
-
-  let currentCard = null;
-  let drawn = false;
-
-  function fillFace(card, refs) {
-    refs.icon.innerHTML = card.svg
-      ? `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">${card.svg}</svg>`
-      : "";
-    refs.title.textContent = card.title;
-    refs.reading.textContent = card.reading;
-    refs.message.textContent = card.message;
-    refs.question.textContent = card.question;
+  /* ---------- Scroll reveal ---------- */
+  const revealEls = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+    );
+    revealEls.forEach((el) => io.observe(el));
+  } else {
+    revealEls.forEach((el) => el.classList.add("is-visible"));
   }
 
-  function drawRandomCard() {
-    const card = CARDS[Math.floor(Math.random() * CARDS.length)];
-    currentCard = card;
-    fillFace(card, {
-      icon: cardIcon,
-      title: cardTitle,
-      reading: cardReading,
-      message: cardMessage,
-      question: cardQuestion
+  /* ---------- Hero constellation ---------- */
+  const canvas = document.getElementById("aura");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const hero = canvas.parentElement;
+
+  let width, height, dpr;
+  let nodes = [];
+
+  function seededRandom(seed) {
+    let s = seed;
+    return () => {
+      s = (s * 9301 + 49297) % 233280;
+      return s / 233280;
+    };
+  }
+  const rand = seededRandom(42);
+
+  function buildNodes() {
+    const count = Math.max(18, Math.min(36, Math.round((width * height) / 42000)));
+    nodes = Array.from({ length: count }, () => ({
+      x: rand() * width,
+      y: rand() * height,
+      vx: (rand() - 0.5) * 0.12,
+      vy: (rand() - 0.5) * 0.12,
+      r: 1 + rand() * 1.6,
+    }));
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    width = hero.clientWidth;
+    height = hero.clientHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildNodes();
+  }
+
+  function step() {
+    ctx.clearRect(0, 0, width, height);
+
+    nodes.forEach((n) => {
+      if (!reduceMotion) {
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 0 || n.x > width) n.vx *= -1;
+        if (n.y < 0 || n.y > height) n.vy *= -1;
+      }
     });
-    cardEl.classList.remove("flipped");
-    drawn = false;
-    drawBtn.hidden = true;
-    resetBtn.hidden = true;
-    cardEl.hidden = false;
-  }
 
-  function flipCard() {
-    if (!currentCard) return;
-    cardEl.classList.toggle("flipped");
-    if (cardEl.classList.contains("flipped") && !drawn) {
-      drawn = true;
-      resetBtn.hidden = false;
+    const linkDist = Math.min(width, height) * 0.22;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < linkDist) {
+          ctx.strokeStyle = `rgba(201, 169, 106, ${0.22 * (1 - dist / linkDist)})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
     }
+
+    nodes.forEach((n) => {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(244, 239, 225, 0.55)";
+      ctx.fill();
+    });
+
+    if (!reduceMotion) requestAnimationFrame(step);
   }
 
-  cardEl.hidden = true;
-
-  drawBtn.addEventListener("click", drawRandomCard);
-  resetBtn.addEventListener("click", () => {
-    drawRandomCard();
-  });
-
-  cardEl.addEventListener("click", flipCard);
-  cardEl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      flipCard();
-    }
-  });
-
-  // ---- タブ切り替え ----
-  const tabButtons = document.querySelectorAll(".tab-btn");
-  const screens = document.querySelectorAll(".screen");
-
-  tabButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      tabButtons.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      const target = btn.dataset.tab;
-      screens.forEach((s) => s.classList.toggle("active", s.id === target));
-    });
-  });
-
-  // ---- 一覧タブ ----
-  function renderGallery() {
-    galleryGrid.innerHTML = "";
-    CARDS.forEach((card) => {
-      const item = document.createElement("div");
-      item.className = "gallery-item";
-      item.innerHTML = `
-        <div class="card-icon"><svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">${card.svg}</svg></div>
-        <h3>${card.title}</h3>
-      `;
-      item.addEventListener("click", () => openModal(card));
-      galleryGrid.appendChild(item);
-    });
-  }
-
-  function openModal(card) {
-    fillFace(card, {
-      icon: modalIcon,
-      title: modalTitle,
-      reading: modalReading,
-      message: modalMessage,
-      question: modalQuestion
-    });
-    modalOverlay.hidden = false;
-  }
-
-  modalClose.addEventListener("click", () => {
-    modalOverlay.hidden = true;
-  });
-  modalOverlay.addEventListener("click", (e) => {
-    if (e.target === modalOverlay) modalOverlay.hidden = true;
-  });
-
-  renderGallery();
+  resize();
+  window.addEventListener("resize", resize);
+  step();
 })();
