@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>セッション予約</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <!-- 役割切替（開発用・本番では DEV_MODE=false で非表示） -->
+  <div class="rolebar" id="devRoleBar">
+    <button data-role="customer" class="on">お客様</button>
+    <button data-role="owner">オーナー（あなた）</button>
+  </div>
+  <div class="rolehint" id="devRoleHint">※【開発用】立場を切り替えて体験できます（本番では非表示）</div>
+
+  <!-- ============ お客様 ============ -->
+  <div id="role-customer" class="wrap">
+    <!-- メイン画面：カレンダー → メニュー → 時間 -->
+    <section id="c-cal">
+      <div class="brand"><div class="name">SESSION BOOKING</div></div>
+      <h1 id="cTitle">セッション予約</h1>
+      <p class="lead" id="cLead"></p>
+      <p style="text-align:center;margin:-8px 0 14px;"><button class="linkbtn" id="cGoLookup">すでにご予約の方（確認・変更・キャンセル）</button></p>
+      <div class="card">
+        <div class="step"><span class="n">1</span>日にちを選ぶ</div>
+        <div class="cal-head"><button class="nav" id="cPrev">‹</button><div class="cal-title" id="cCalTitle"></div><button class="nav" id="cNext">›</button></div>
+        <div class="dow"><div class="sun">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div class="sat">土</div></div>
+        <div class="grid" id="cGrid"></div>
+        <div class="legend"><span><i class="sw-open"></i>予約できる</span><span><i class="sw-full"></i>満員</span><span><i class="sw-closed"></i>受付なし</span></div>
+      </div>
+      <div class="card hidden" id="cMenuCard">
+        <div class="step"><span class="n">2</span>メニューを選ぶ</div>
+        <div class="day-label" id="cMenuDayLabel"></div>
+        <div id="cMenuList"></div>
+      </div>
+      <div class="card hidden" id="cTimeCard">
+        <div class="step"><span class="n">3</span>時間を選ぶ</div>
+        <div class="selbar" id="cMenuBanner" style="margin:0 0 12px;"></div>
+        <div class="day-label" id="cDayLabel"></div>
+        <div class="slots" id="cSlots"></div>
+        <div class="selbar hidden" id="cSelbar"></div>
+        <button class="btn hidden" id="cToForm">この時間で予約する</button>
+      </div>
+      <p class="hint">※ご予約が完了すると、確認メールを自動でお送りします（決済はデモのため実際の請求は発生しません）。</p>
+    </section>
+
+    <!-- 予約の確認（メールで照会） -->
+    <section id="c-lookup" class="hidden">
+      <button class="back" id="cLookupBack">‹ 予約画面に戻る</button>
+      <h1>ご予約の確認</h1>
+      <p class="lead">ご予約時のメールアドレスで確認できます。</p>
+      <div class="card">
+        <label class="f">メールアドレス</label>
+        <input id="luEmail" type="email" placeholder="ご予約時のメールアドレス">
+        <div class="err" id="luErr"></div>
+        <button class="btn" id="luFind">予約を確認する</button>
+        <div id="luList" style="margin-top:8px;"></div>
+      </div>
+      <p class="hint" style="text-align:left;">※プロトタイプではメール照会にしています。本番では、確認メール内の専用リンクから安全に確認・変更・キャンセルできるようにします。</p>
+    </section>
+
+    <section id="c-form" class="hidden">
+      <button class="back" id="cBackCal">‹ 日時を選び直す</button>
+      <div class="card">
+        <div class="step"><span class="n">4</span>お客様情報を入力</div>
+        <div class="selbar" id="cFormWhen"></div>
+        <label class="f">お名前<span class="req">必須</span></label><input id="cName" type="text" placeholder="山田 花子">
+        <label class="f">メールアドレス<span class="req">必須</span></label><input id="cEmail" type="email" placeholder="example@mail.com">
+        <label class="f">電話番号<span class="req">必須</span></label><input id="cTel" type="tel" placeholder="090-1234-5678">
+        <label class="f">メッセージ・ご相談内容<span class="opt2">任意</span></label><textarea id="cMsg" placeholder="当日相談したいことなど（任意）"></textarea>
+        <div class="err" id="cErr"></div>
+        <button class="btn" id="cToConfirm">確認画面へ進む</button>
+      </div>
+    </section>
+
+    <section id="c-confirm" class="hidden">
+      <button class="back" id="cBackForm">‹ 入力に戻る</button>
+      <div class="card">
+        <div class="step"><span class="n">5</span>ご予約内容と料金の確認</div>
+        <div class="sum" id="cSum"></div>
+        <p class="hint" style="text-align:left;margin-top:10px;">お支払いが完了すると予約が確定します。</p>
+        <button class="btn" id="cConfirmBtn">お支払いへ進む</button>
+        <button class="btn ghost" id="cEditBtn">内容を修正する</button>
+      </div>
+    </section>
+
+    <section id="c-payment" class="hidden">
+      <button class="back" id="cBackConfirm">‹ 内容の確認に戻る</button>
+      <div class="card">
+        <div class="step"><span class="n">6</span>お支払い</div>
+        <div class="selbar" id="cPayAmount"></div>
+        <label class="f">カード番号</label><input id="pcNum" type="text" inputmode="numeric" placeholder="4242 4242 4242 4242" value="4242 4242 4242 4242">
+        <div class="grid2"><div><label class="f">有効期限</label><input id="pcExp" type="text" placeholder="12/28" value="12/28"></div><div><label class="f">セキュリティコード</label><input id="pcCvc" type="text" inputmode="numeric" placeholder="123" value="123"></div></div>
+        <label class="f">カード名義</label><input id="pcName" type="text" placeholder="HANAKO YAMADA">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:12px;"><input type="checkbox" id="pcFail" style="width:auto;"> 決済を失敗させる（デモ用）</label>
+        <div class="err" id="cPayErr"></div>
+        <button class="btn" id="cPayBtn">お支払い</button>
+        <p class="hint" style="text-align:left;">※プロトタイプのため実際の請求は発生しません。本番ではStripe等に接続します。</p>
+      </div>
+    </section>
+
+    <section id="c-done" class="hidden">
+      <div class="card done">
+        <div class="mark" id="cDoneMark">✓</div>
+        <h1 style="margin-bottom:10px;" id="cDoneTitle">予約が完了しました</h1>
+        <div id="cDoneBody"></div>
+        <p class="lead" id="cDoneLead" style="margin:10px 0 0;">当日どうぞよろしくお願いいたします。</p>
+        <div id="cDoneActions">
+          <button class="btn ghost" id="cChange" style="margin-top:20px;">予約日時を変更する</button>
+          <button class="btn danger" id="cCancel">予約をキャンセルする</button>
+        </div>
+        <button class="btn ghost" id="cRestart">最初の画面に戻る</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ オーナー（あなた） ============ -->
+  <div id="role-owner" class="wrap hidden">
+    <section id="o-login">
+      <h1>オーナー ログイン</h1>
+      <p class="lead">あなた専用の管理画面です。</p>
+      <div class="card">
+        <label class="f">メールアドレス</label><input id="olEmail" type="email" placeholder="you@example.com" autocomplete="username">
+        <label class="f">パスワード</label><input id="olPass" type="password" placeholder="パスワード" autocomplete="current-password">
+        <div class="err" id="olErr"></div>
+        <button class="btn" id="olBtn">ログイン</button>
+      </div>
+      <div class="card" style="background:#faf5f2;"><div class="profSec">プロトタイプ用ログイン情報</div><div class="profTxt" style="font-size:13px;">you@example.com ／ owner1234</div></div>
+    </section>
+
+    <div id="o-main" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><h1 style="text-align:left;margin:0;">管理画面</h1><p class="lead" style="text-align:left;margin:0;" id="oName"></p></div>
+        <button class="linkbtn" id="oLogout">ログアウト</button>
+      </div>
+      <div class="rolebar" style="position:static;background:none;border:0;padding:12px 0;">
+        <button class="on" data-otab="avail">対応可能日時</button>
+        <button data-otab="bookings">予約一覧</button>
+        <button data-otab="settings">メニュー</button>
+      </div>
+
+      <section id="o-avail">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <h2 style="margin:0;">対応可能日時</h2><button class="btn sm" id="oAdd">＋ 追加</button>
+          </div>
+          <div id="oBlocks"></div>
+        </div>
+        <p class="hint" style="text-align:left;">登録した時間から、メニューの所要時間＋バッファ＋刻み幅で予約枠が自動計算されます。</p>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <h2 style="margin:0;">予約を受けない時間</h2><button class="btn sm" id="oAddNg">＋ 追加</button>
+          </div>
+          <div id="oNgList"></div>
+        </div>
+        <p class="hint" style="text-align:left;">体調・移動・私用などで受けたくない時間を、自動計算とは別に手動で塞げます。ここで塞いだ時間は予約できません。</p>
+      </section>
+
+      <section id="o-bookings" class="hidden">
+        <div class="card"><h2 style="margin:0 0 6px;">予約一覧</h2><div id="oBookingList"></div></div>
+      </section>
+
+      <section id="o-settings" class="hidden">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <h2 style="margin:0;">メニュー</h2><button class="btn sm" id="oAddMenu">＋ 追加</button>
+          </div>
+          <div id="oMenuList"></div>
+          <p class="hint" style="text-align:left;">「決済あり」のメニューは支払い後に予約確定、「決済なし」はそのまま確定します。料金を変えても、確定済みの予約金額は変わりません。</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div><h2 style="margin:0;">オンライン会議</h2><div class="t2" id="oOnlineView" style="color:var(--muted);font-size:12.5px;"></div></div>
+            <button class="btn sm" id="oChangeOnline">変更</button>
+          </div>
+          <p class="hint" style="text-align:left;">「オンライン」形式のメニューで案内する会議です。固定URL（定期ミーティングルーム）／自動発行／なし を選べます。</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div><h2 style="margin:0;">対面の場所</h2></div>
+            <button class="btn sm" id="oChangeLoc">変更</button>
+          </div>
+          <div class="t2" id="oLocView" style="color:var(--muted);font-size:12.5px;margin-top:6px;"></div>
+          <p class="hint" style="text-align:left;">「対面（リアル）」形式のメニューで、お客様に案内する場所です。</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div><h2 style="margin:0;">予約の刻み幅</h2><div class="t2" id="oStepView" style="color:var(--muted);font-size:12.5px;"></div></div>
+            <button class="btn sm" id="oChangeStep">変更</button>
+          </div>
+          <p class="hint" style="text-align:left;">予約開始時刻をこの間隔で表示します（例：30分刻み → 10:00, 10:30, 11:00…）。</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="hint" id="devFlowHint" style="padding-bottom:20px;">【開発用メモ】オーナー → 対応可能日時と料金を設定 ／ お客様 → 日時を選んで決済・予約</div>
+</div>
+<div id="modalRoot"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
