@@ -48,10 +48,15 @@
 
 - [x] Zoom有料アカウントとのAPI連携: marketplace.zoom.us でServer-to-Server OAuthアプリを作成し、
       Account ID / Client ID / Client Secretを取得してGAS側の `ZOOM_ACCOUNT_ID` / `ZOOM_CLIENT_ID` /
-      `ZOOM_CLIENT_SECRET` に設定済み。`meeting:write:meeting:admin` スコープ追加・アプリ有効化も完了。
-      `testZoom` 実行で本物のZoom会議URL発行を確認済み。予約サイト側のオーナー設定「オンライン会議の設定」も
+      `ZOOM_CLIENT_SECRET` に設定済み。予約サイト側のオーナー設定「オンライン会議の設定」も
       「毎回、本物の新しいリンクを自動発行(Zoom API連携)」に切り替え・保存済み。
-      (念のため、実際のオンライン予約を1件テストして確認メールに毎回違うURLが入るか確認するとよい。)
+      Zoomスコープは以下3つを追加・有効化済み（会議の「作成」だけでなく「削除」「更新」は別スコープなので注意）：
+      - `会議:書き込み:会議:管理者`（meeting:write:meeting:admin、作成用）
+      - `会議:削除:会議:管理者`（meeting:delete:meeting:admin、キャンセル時の自動削除用）
+      - `会議:更新:会議:管理者`（meeting:update:meeting:admin、日時変更時の自動更新用）
+      新規予約時にZoom会議IDを台帳のJSON列（`zoomMeetingId`）に保存し、キャンセル時は`deleteZoomMeeting_`、
+      日時変更時は`updateZoomMeetingTime_`で連携するよう実装済み（`getZoomMeetingId_`で台帳から引く）。
+      実際に新規予約→キャンセルのテストで、Zoom会議が自動削除されることを確認済み（動作確認完了）。
 - [ ] 商品化用コピーの作成(上記の通り、着手時期は未定・本人の意向待ち)。
 - [ ] クレジットカード決済(Stripe等)連携は未着手。今後の大きな課題として認識している。
 
