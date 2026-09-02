@@ -1,0 +1,254 @@
+:root {
+  --bg-1: #fdf6ef;
+  --bg-2: #f3e7f7;
+  --ink: #4a4256;
+  --ink-soft: #7c7288;
+  --accent: #b98cd6;
+  --accent-2: #7ec4cf;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+  color: var(--ink);
+  background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  margin: 0 0 8px;
+}
+
+.tagline {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+main { flex: 1; }
+
+.screen[hidden] { display: none; }
+
+.form-section {
+  background: #fffefb;
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 26px rgba(80, 50, 100, 0.1);
+}
+
+.section-title {
+  font-size: 1.05rem;
+  margin: 0 0 4px;
+  color: var(--ink);
+  border-left: 4px solid var(--accent);
+  padding-left: 10px;
+}
+
+.section-note {
+  margin: 6px 0 16px;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.field {
+  margin-top: 18px;
+}
+
+.form-section > .field:first-of-type {
+  margin-top: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #e5d9ee;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--ink);
+  background: #fff;
+}
+
+textarea { resize: vertical; }
+
+.other-input { margin-top: 8px; }
+
+.choice-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-1);
+  border: 1px solid #e5d9ee;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.choice-pill input { accent-color: var(--accent); }
+
+.scale-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.scale-pill {
+  flex: 1;
+  min-width: 60px;
+  text-align: center;
+}
+
+.scale-pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scale-pill span {
+  display: block;
+  border: 1px solid #e5d9ee;
+  border-radius: var(--radius-sm);
+  padding: 10px 4px;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.scale-pill input:checked + span {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.scale-pill.na span {
+  font-size: 0.68rem;
+}
+
+.nps-group {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 4px;
+}
+
+.nps-pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nps-pill span {
+  display: block;
+  text-align: center;
+  border: 1px solid #e5d9ee;
+  border-radius: var(--radius-sm);
+  padding: 8px 0;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.nps-pill input:checked + span {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  color: #fff;
+}
+
+.nps-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+}
+
+.submit-area {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.primary-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 40px;
+  font-size: 1rem;
+  color: #fff;
+  background: var(--accent);
+  box-shadow: 0 8px 20px rgba(185, 140, 214, 0.4);
+  cursor: pointer;
+}
+
+.thanks-screen {
+  text-align: center;
+  background: #fffefb;
+  border-radius: var(--radius-lg);
+  padding: 60px 24px;
+  box-shadow: 0 10px 26px rgba(80, 50, 100, 0.1);
+}
+
+.thanks-icon {
+  font-size: 2.4rem;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.thanks-screen h2 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.thanks-screen p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.app-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 420px) {
+  .nps-group { grid-template-columns: repeat(6, 1fr); }
+}

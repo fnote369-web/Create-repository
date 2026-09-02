@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>予約ツール使用感アンケート</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>予約ツール使用感アンケート</h1>
+      <p class="tagline">実際に触ってみたご感想をお聞かせください（所要時間：約5分）</p>
+    </header>
+
+    <main>
+      <form id="surveyForm" class="screen active" novalidate>
+
+        <!-- 基本情報 -->
+        <section class="form-section">
+          <h2 class="section-title">基本情報</h2>
+
+          <div class="field">
+            <label for="q1_name">お名前（ニックネーム可）</label>
+            <input type="text" id="q1_name" name="q1_name" placeholder="例：さくら">
+          </div>
+
+          <div class="field">
+            <label for="q2_job">現在のご職業・業種（任意）</label>
+            <input type="text" id="q2_job" name="q2_job" placeholder="例：整体院経営">
+          </div>
+
+          <div class="field">
+            <label>普段、予約管理はどうされていますか？</label>
+            <div class="choice-group">
+              <label class="choice-pill"><input type="radio" name="q3_current" value="電話">電話</label>
+              <label class="choice-pill"><input type="radio" name="q3_current" value="LINE">LINE</label>
+              <label class="choice-pill"><input type="radio" name="q3_current" value="紙">紙</label>
+              <label class="choice-pill"><input type="radio" name="q3_current" value="他の予約システム">他の予約システム</label>
+              <label class="choice-pill"><input type="radio" name="q3_current" value="その他">その他</label>
+            </div>
+            <input type="text" id="q3_current_other" name="q3_current_other" class="other-input" placeholder="その他の内容があればご記入ください">
+          </div>
+        </section>
+
+        <!-- セットアップの難易度 -->
+        <section class="form-section">
+          <h2 class="section-title">セットアップの難易度</h2>
+          <p class="section-note">各項目について、5段階でお答えください。</p>
+
+          <div class="field scale-field" data-required="true">
+            <label>4. 全体を通しての設定の難しさ</label>
+            <div class="scale-group" data-name="q4_overall_difficulty"></div>
+          </div>
+
+          <div class="field scale-field" data-required="true">
+            <label>5. 営業時間・メニュー・料金の設定</label>
+            <div class="scale-group" data-name="q5_hours_menu_price"></div>
+          </div>
+
+          <div class="field scale-field" data-required="true">
+            <label>6. お客様として実際に予約してみる操作</label>
+            <div class="scale-group" data-name="q6_booking_as_customer"></div>
+          </div>
+
+          <div class="field scale-field">
+            <label>7. （試した方のみ）Zoom連携の設定</label>
+            <div class="scale-group" data-name="q7_zoom_setup" data-include-na="true"></div>
+          </div>
+
+          <div class="field scale-field">
+            <label>8. （試した方のみ）カード決済（Stripe）の設定</label>
+            <div class="scale-group" data-name="q8_stripe_setup" data-include-na="true"></div>
+          </div>
+        </section>
+
+        <!-- 具体的なフィードバック -->
+        <section class="form-section">
+          <h2 class="section-title">具体的なフィードバック</h2>
+
+          <div class="field">
+            <label for="q9_stuck_point">9. 一番分かりにくかった・つまずいたのはどの部分ですか？</label>
+            <textarea id="q9_stuck_point" name="q9_stuck_point" rows="3" placeholder="自由にご記入ください"></textarea>
+          </div>
+
+          <div class="field scale-field">
+            <label>10. 用意されているガイド（説明書）は分かりやすかったですか？</label>
+            <div class="scale-group" data-name="q10_guide_clarity"></div>
+          </div>
+
+          <div class="field">
+            <label for="q11_unresolved">11. ガイドを読んでも解決しなかったことはありましたか？</label>
+            <textarea id="q11_unresolved" name="q11_unresolved" rows="3" placeholder="自由にご記入ください"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="q12_wanted_features">12. こういう機能があったらいいのに、と思ったものはありますか？</label>
+            <textarea id="q12_wanted_features" name="q12_wanted_features" rows="3" placeholder="自由にご記入ください"></textarea>
+          </div>
+        </section>
+
+        <!-- 総合評価 -->
+        <section class="form-section">
+          <h2 class="section-title">総合評価</h2>
+
+          <div class="field">
+            <label for="q13_price_band">13. もし販売されていたら、いくらくらいなら購入したいと思いますか？</label>
+            <select id="q13_price_band" name="q13_price_band">
+              <option value="">選択してください</option>
+              <option value="無料程度でないと使わない">無料程度でないと使わない</option>
+              <option value="〜1,000円">〜1,000円</option>
+              <option value="1,000〜3,000円">1,000〜3,000円</option>
+              <option value="3,000〜5,000円">3,000〜5,000円</option>
+              <option value="5,000〜10,000円">5,000〜10,000円</option>
+              <option value="10,000円以上">10,000円以上</option>
+            </select>
+            <input type="text" id="q13_price_free" name="q13_price_free" class="other-input" placeholder="具体的な金額やコメントがあればご記入ください">
+          </div>
+
+          <div class="field scale-field" data-required="true">
+            <label>14. 同業の知人にすすめたいと思いますか？</label>
+            <div class="nps-group" id="npsGroup"></div>
+            <div class="nps-labels">
+              <span>すすめたくない</span>
+              <span>ぜひすすめたい</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="q15_free_comment">15. その他、ご自由にご意見をどうぞ</label>
+            <textarea id="q15_free_comment" name="q15_free_comment" rows="4" placeholder="自由にご記入ください"></textarea>
+          </div>
+        </section>
+
+        <div class="submit-area">
+          <button type="submit" class="primary-btn">回答を送信する</button>
+        </div>
+      </form>
+
+      <section id="thanksScreen" class="screen thanks-screen" hidden>
+        <div class="thanks-icon">✦</div>
+        <h2>ご回答ありがとうございました！</h2>
+        <p>いただいたご意見は、今後のツール改善に活用させていただきます。</p>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>ご回答内容は今後のサービス改善のみに利用します。</p>
+    </footer>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
