@@ -66,7 +66,7 @@ function sendLetterEmail_(user, letter) {
   var readUrl = siteUrl + "#/auth?token=" + encodeURIComponent(token) + "&next=" + encodeURIComponent("/letter/" + letter.day);
   var settingsUrl = siteUrl + "#/auth?token=" + encodeURIComponent(token) + "&next=" + encodeURIComponent("/settings");
   var subject = "【Day" + letter.day + "】1年後のあなたから手紙が届きました";
-  var excerpt = (letter.body || "").split("\n").filter(function (l) { return l.trim(); })[1] || "";
+  var excerpt = (letter.body || "").split("\n").filter(function (l) { return l.trim(); })[0] || "";
   var html = buildEmailHtml_(user, letter, excerpt, readUrl, settingsUrl);
   GmailApp.sendEmail(user.email, subject, stripHtml_(html), { htmlBody: html, name: "Future Letter 30days" });
 }

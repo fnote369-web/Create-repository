@@ -80,7 +80,7 @@ function LetterRow({ letter, locked, read }) {
   const content = (
     <div className="row-between card" style={{ padding: "var(--space-3) var(--space-4)" }}>
       <div>
-        <div className="small muted">Day{letter.day} ｜ {letter.phase}</div>
+        <div className="small muted">Day{letter.day}</div>
         {!locked && <div>{letter.title.replace(/^Day\d+｜/, "")}</div>}
       </div>
       {locked ? (

@@ -26,7 +26,7 @@ function publicUser_(user) {
 function visibleLetter_(user, letter) {
   var day = clampDay_(computeDay_(user));
   if (letter.day <= day) return Object.assign({}, letter, { locked: false });
-  return { day: letter.day, phase: letter.phase, locked: true };
+  return { day: letter.day, locked: true };
 }
 
 function registerUser_(payload) {

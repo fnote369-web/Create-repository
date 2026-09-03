@@ -403,7 +403,7 @@ function visibleLetter(user, letter) {
   const day = Math.min(Math.max(computeDay(user), 0), 30);
   const unlocked = letter.day <= day;
   if (unlocked) return { ...letter, locked: false };
-  return { day: letter.day, phase: letter.phase, locked: true };
+  return { day: letter.day, locked: true };
 }
 
 function csvEscape(value) {

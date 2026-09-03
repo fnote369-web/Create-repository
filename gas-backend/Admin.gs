@@ -86,7 +86,7 @@ function adminSendTestMail_(adminToken, userId, day) {
   var letter = found.user.letters[Number(day) - 1];
   if (!letter) throw appError_("指定のDayの手紙が見つかりません。", "NOT_FOUND");
   sendLetterEmail_(found.user, letter);
-  var excerpt = (letter.body || "").split("\n").filter(function (l) { return l.trim(); })[1] || "";
+  var excerpt = (letter.body || "").split("\n").filter(function (l) { return l.trim(); })[0] || "";
   return {
     ok: true,
     note: "テストメールを " + found.user.email + " 宛に送信しました。",

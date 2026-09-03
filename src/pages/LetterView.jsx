@@ -62,19 +62,28 @@ export default function LetterView() {
 
   return (
     <Shell>
-      <div className="small muted">{letter.phase}</div>
       <h1>{letter.title}</h1>
 
       <div className="card envelope-card">
         <p style={{ whiteSpace: "pre-wrap" }}>{letter.body}</p>
       </div>
 
-      <div className="card stack">
-        <h3 style={{ fontSize: "1rem" }}>今日の小さな問いかけ</h3>
-        <p>{letter.question}</p>
-        <h3 style={{ fontSize: "1rem" }}>今日できる小さな一歩</h3>
-        <p>{letter.action}</p>
-      </div>
+      {(letter.question || letter.action) && (
+        <div className="card stack">
+          {letter.question && (
+            <>
+              <h3 style={{ fontSize: "1rem" }}>今日の小さな問いかけ</h3>
+              <p>{letter.question}</p>
+            </>
+          )}
+          {letter.action && (
+            <>
+              <h3 style={{ fontSize: "1rem" }}>今日できる小さな一歩</h3>
+              <p>{letter.action}</p>
+            </>
+          )}
+        </div>
+      )}
 
       <div className="card stack">
         <label htmlFor="memo"><strong>メモ</strong></label>
